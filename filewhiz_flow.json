@@ -1,0 +1,127 @@
+{
+    "nodes": [
+        {
+            "id": "fileInput",
+            "data": {
+                "type": "FileInput",
+                "name": "Document Input",
+                "baseClasses": ["FileInput"],
+                "inputs": {
+                    "inputDirectory": {
+                        "type": "string",
+                        "default": "inputs"
+                    },
+                    "outputDirectory": {
+                        "type": "string",
+                        "default": "outputs"
+                    }
+                }
+            }
+        },
+        {
+            "id": "documentConverter",
+            "data": {
+                "type": "DocumentConverter",
+                "name": "File Converter",
+                "baseClasses": ["DocumentConverter"],
+                "description": "Converts PDF, Excel, PowerPoint, and Word files to markdown",
+                "inputs": {
+                    "supportedFormats": ["pdf", "xlsx", "pptx", "docx"]
+                }
+            }
+        },
+        {
+            "id": "textSplitter",
+            "data": {
+                "type": "TextSplitter",
+                "name": "Text Chunker",
+                "baseClasses": ["TextSplitter"],
+                "inputs": {
+                    "chunkSize": 1000,
+                    "chunkOverlap": 200
+                }
+            }
+        },
+        {
+            "id": "embedding",
+            "data": {
+                "type": "Embeddings",
+                "name": "Ollama Embeddings",
+                "baseClasses": ["Embeddings"],
+                "inputs": {
+                    "model": "nomic-embed-text"
+                }
+            }
+        },
+        {
+            "id": "vectorStore",
+            "data": {
+                "type": "VectorStore",
+                "name": "FAISS Store",
+                "baseClasses": ["VectorStore"],
+                "inputs": {
+                    "storePath": "faiss_index",
+                    "indexType": "HNSW",
+                    "M": 16,
+                    "efConstruction": 200
+                }
+            }
+        },
+        {
+            "id": "llmChain",
+            "data": {
+                "type": "LLMChain",
+                "name": "Chat Chain",
+                "baseClasses": ["LLMChain"],
+                "inputs": {
+                    "model": "Groq",
+                    "temperature": 0.7,
+                    "promptTemplates": {
+                        "default": "PROMPT_TEMPLATE",
+                        "excel": "EXCEL_PROMPT_TEMPLATE"
+                    }
+                }
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "fileInput",
+            "target": "documentConverter",
+            "sourceHandle": "output",
+            "targetHandle": "input"
+        },
+        {
+            "source": "documentConverter",
+            "target": "textSplitter",
+            "sourceHandle": "output",
+            "targetHandle": "input"
+        },
+        {
+            "source": "textSplitter",
+            "target": "embedding",
+            "sourceHandle": "output",
+            "targetHandle": "input"
+        },
+        {
+            "source": "embedding",
+            "target": "vectorStore",
+            "sourceHandle": "output",
+            "targetHandle": "input"
+        },
+        {
+            "source": "vectorStore",
+            "target": "llmChain",
+            "sourceHandle": "output",
+            "targetHandle": "input"
+        }
+    ],
+    "configuration": {
+        "name": "FileWhiz Flow",
+        "description": "A document processing and QA system with support for multiple file formats",
+        "version": "2.1",
+        "environment": {
+            "COHERE_API_KEY": "${COHERE_API_KEY}"
+        }
+    }
+}

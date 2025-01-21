@@ -1,0 +1,160 @@
+{
+    "id": "filewhiz-flow",
+    "name": "FileWhiz Document Processing Flow",
+    "nodes": [
+        {
+            "width": 300,
+            "height": 300,
+            "id": "fileInput-1",
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "type": "customNode",
+            "data": {
+                "id": "fileInput-1",
+                "label": "File Input",
+                "name": "directoryLoader",
+                "type": "DirectoryLoader",
+                "inputs": {
+                    "directory": "inputs"
+                }
+            }
+        },
+        {
+            "width": 300,
+            "height": 300,
+            "id": "textsplitter-1",
+            "position": {
+                "x": 400,
+                "y": 0
+            },
+            "type": "customNode",
+            "data": {
+                "id": "textsplitter-1",
+                "label": "Text Splitter",
+                "name": "recursiveCharacterTextSplitter",
+                "type": "RecursiveCharacterTextSplitter",
+                "inputs": {
+                    "chunkSize": 1000,
+                    "chunkOverlap": 200
+                }
+            }
+        },
+        {
+            "width": 300,
+            "height": 300,
+            "id": "embeddings-1",
+            "position": {
+                "x": 800,
+                "y": 0
+            },
+            "type": "customNode",
+            "data": {
+                "id": "embeddings-1",
+                "label": "Embeddings",
+                "name": "ollamaEmbeddings",
+                "type": "OllamaEmbeddings",
+                "inputs": {
+                    "baseURL": "http://localhost:11434",
+                    "model": "nomic-embed-text"
+                }
+            }
+        },
+        {
+            "width": 300,
+            "height": 300,
+            "id": "vectorstore-1",
+            "position": {
+                "x": 1200,
+                "y": 0
+            },
+            "type": "customNode",
+            "data": {
+                "id": "vectorstore-1",
+                "label": "Vector Store",
+                "name": "faiss",
+                "type": "FAISSStore",
+                "inputs": {
+                    "storePath": "faiss_index"
+                }
+            }
+        },
+        {
+            "width": 300,
+            "height": 300,
+            "id": "llm-1",
+            "position": {
+                "x": 1600,
+                "y": 0
+            },
+            "type": "customNode",
+            "data": {
+                "id": "llm-1",
+                "label": "Chat Model",
+                "name": "groq",
+                "type": "Groq",
+                "inputs": {
+                    "temperature": 0.7,
+                    "model": "mixtral-8x7b-32768"
+                }
+            }
+        },
+        {
+            "width": 300,
+            "height": 300,
+            "id": "prompt-1",
+            "position": {
+                "x": 1600,
+                "y": 400
+            },
+            "type": "customNode",
+            "data": {
+                "id": "prompt-1",
+                "label": "Prompt Template",
+                "name": "promptTemplate",
+                "type": "PromptTemplate",
+                "inputs": {
+                    "template": "Answer the question based only on the following context and in the same language of the question:\n\n{context}\n\n---\n\nAnswer the question based on the above context: {question}"
+                }
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "edge-1",
+            "source": "fileInput-1",
+            "target": "textsplitter-1",
+            "type": "default"
+        },
+        {
+            "id": "edge-2",
+            "source": "textsplitter-1",
+            "target": "embeddings-1",
+            "type": "default"
+        },
+        {
+            "id": "edge-3",
+            "source": "embeddings-1",
+            "target": "vectorstore-1",
+            "type": "default"
+        },
+        {
+            "id": "edge-4",
+            "source": "vectorstore-1",
+            "target": "llm-1",
+            "type": "default"
+        },
+        {
+            "id": "edge-5",
+            "source": "prompt-1",
+            "target": "llm-1",
+            "type": "default"
+        }
+    ],
+    "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 1
+    }
+}
