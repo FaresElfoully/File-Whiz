@@ -35,7 +35,6 @@ load_dotenv()
 FAISS_PATH = "faiss_index"
 DATA_PATH = "outputs"
 CHUNKS_PATH = os.path.join(FAISS_PATH, "chunks.pkl")
-COHERE_API_KEY = os.getenv('COHERE_API_KEY', '3hLheqT2lFX5RjiSEOzsu04rKStDF1LSyMwTzTIk')
 HNSW_M = 16  # Number of connections per layer
 HNSW_EF_CONSTRUCTION = 200  # Size of dynamic candidate list for construction
 HYBRID_ALPHA = 0.7  # Weight for dense embeddings vs sparse search
@@ -744,7 +743,7 @@ def query_faiss(query_text: str = None):
         )
 
     print("🤖 Generating response...")
-    client = Groq(api_key="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")
+    client =
     completion = client.chat.completions.create(
         model="llama-3.2-90b-vision-preview",
         messages=[
